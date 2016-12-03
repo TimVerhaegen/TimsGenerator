@@ -15,54 +15,53 @@ import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
 import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
-/**
- * Created by Tim Verhaegen on 3/12/2016.
- */
 @Updates(@Facet(SurfaceHeightFacet.class))
 public class TimsMountainProvider implements ConfigurableFacetProvider {
-    private SubSampledNoise mountainNoise;
-    private TimsMountainConfiguration config = new TimsMountainConfiguration();
-    private long worldSeed;
-    @Override
-    public void setSeed(long seed) {
-        worldSeed = seed;
-        mountainNoise = new SubSampledNoise(new BrownianNoise(new PerlinNoise(worldSeed + 2), 8), new Vector2f(0.001f, 0.001f), 1);
-    }
+        private SubSampledNoise mountainNoise;
+        private TimsMountainConfiguration config = new TimsMountainConfiguration();
+        private long worldSeed;
 
-    @Override
-    public void initialize() {
-
-    }
-
-    @Override
-    public void process(GeneratingRegion region) {
-        SurfaceHeightFacet facet = region.getRegionFacet(SurfaceHeightFacet.class);
-        float mountainHeight = config.mountainHeight;
-        Rect2i processRegion = facet.getWorldRegion();
-        for (BaseVector2i position : processRegion.contents()) {
-            float additiveMountainHeight = mountainNoise.noise(position.x(), position.y()) * mountainHeight;
-            additiveMountainHeight = TeraMath.clamp(additiveMountainHeight, 0, mountainHeight);
-            facet.setWorld(position, facet.getWorld(position) + additiveMountainHeight);
+        @Override
+        public void setSeed(long seed) {
+                worldSeed = seed;
+                mountainNoise = new SubSampledNoise(new BrownianNoise(new PerlinNoise(worldSeed + 2), 8), new Vector2f(0.001f, 0.001f), 1);
         }
-    }
 
-    @Override
-    public String getConfigurationName() {
-        return "TimsMountains";
-    }
+        @Override
+        public void initialize() {
 
-    @Override
-    public Component getConfiguration() {
-        return config;
-    }
+        }
+        
+        @Override
+        public void process(GeneratingRegion region) {
+                SurfaceHeightFacet facet = region.getRegionFacet(SurfaceHeightFacet.class);
+                float mountainHeight = config.mountainHeight;
+                Rect2i processRegion = facet.getWorldRegion();
+                for (BaseVector2i position : processRegion.contents()) {
+                        float additiveMountainHeight = mountainNoise.noise(position.x(), position.y()) * mountainHeight;
+                        additiveMountainHeight = TeraMath.clamp(additiveMountainHeight, 0, mountainHeight);
+                        facet.setWorld(position, facet.getWorld(position) + additiveMountainHeight);
+                }
+        }
 
-    @Override
-    public void setConfiguration(Component configuration) {
-        if(configuration instanceof TimsMountainConfiguration) config = (TimsMountainConfiguration) configuration;
-    }
+        @Override
+        public String getConfigurationName() {
+                return "TimsMountains";
+        }
 
-    private static class TimsMountainConfiguration implements Component{
-        @Range(min = 200, max = 500f, increment = 20f, precision = 1, description = "Mountain Height")
-        private float mountainHeight = 400;
-    }
+        @Override
+        public Component getConfiguration() {
+                return config;
+        }
+
+        @Override
+        public void setConfiguration(Component configuration) {
+                if (configuration instanceof TimsMountainConfiguration)
+                        config = (TimsMountainConfiguration) configuration;
+        }
+
+        private static class TimsMountainConfiguration implements Component {
+                @Range(min = 200, max = 500f, increment = 20f, precision = 1, description = "Mountain Height")
+                private float mountainHeight = 400;
+        }
 }
