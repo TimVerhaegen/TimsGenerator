@@ -55,7 +55,6 @@ public class Temple implements ISpawnableStructure {
             int size = Temple.getSize();
             int min = 0;
             int height = (Temple.getSize() + 1) / 2;
-            chunk.setBlock(v, dirt);
             ArrayList<Region3i> region3iList = new ArrayList<>();
             Vector3i under = new Vector3i(v).add((size / 2 - 2), 0, 0);
             Vector3i top = new Vector3i(v).add((size / 2 + 2), 2, size);
@@ -67,6 +66,7 @@ public class Temple implements ISpawnableStructure {
                 min++;
                 size--;
             }
+
         }
 
     }
@@ -75,7 +75,7 @@ public class Temple implements ISpawnableStructure {
         for (int x = min; x <= size; x++) {
             for (int z = min; z <= size; z++) {
                 if (shouldRun(region3iList, ChunkMath.calcBlockPos(new Vector3i(x, y, z).add(centerVector))))
-
+                    // THE PROBLEM LAYS HERE!!!! THE BLOCK IS BEING GLITCHED AND FUZZY WUZZY TRANSFORMED.
                     chunk.setBlock(ChunkMath.calcBlockPos(new Vector3i(x, y, z).add(centerVector)), stone);
             }
         }
