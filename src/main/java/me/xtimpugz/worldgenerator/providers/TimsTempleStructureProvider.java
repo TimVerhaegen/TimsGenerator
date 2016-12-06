@@ -1,10 +1,8 @@
 package me.xtimpugz.worldgenerator.providers;
 
-import me.xtimpugz.worldgenerator.RandomUtils;
 import me.xtimpugz.worldgenerator.facets.TempleFacet;
 import me.xtimpugz.worldgenerator.structures.Temple;
-import org.terasology.math.TeraMath;
-import org.terasology.math.geom.Rect2i;
+import org.terasology.math.geom.BaseVector2i;
 import org.terasology.utilities.procedural.WhiteNoise;
 import org.terasology.world.generation.*;
 import org.terasology.world.generation.facets.SurfaceHeightFacet;
@@ -20,24 +18,16 @@ public class TimsTempleStructureProvider implements FacetProvider {
     @Override
     public void process(GeneratingRegion region) {
 
-        Border3D border = region.getBorderForFacet(TempleFacet.class).extendBy(20, 20, 20);
+        Border3D border = region.getBorderForFacet(TempleFacet.class);
         TempleFacet facet = new TempleFacet(region.getRegion(), border);
         SurfaceHeightFacet surfaceHeightFacet = region.getRegionFacet(SurfaceHeightFacet.class);
 
-        Rect2i worldRegion = surfaceHeightFacet.getWorldRegion();
+        for (BaseVector2i position : surfaceHeightFacet.getWorldRegion().contents()) {
+            int surfaceHeight = (int) surfaceHeightFacet.getWorld(position);
 
-        for (int wz = worldRegion.minY(); wz <= worldRegion.maxY(); wz++) {
-            for (int wx = worldRegion.minX(); wx <= worldRegion.maxX(); wx++) {
-                int surfaceHeight = TeraMath.floorToInt(surfaceHeightFacet.getWorld(wx, wz));
-                if (surfaceHeight >= facet.getWorldRegion().minY() &&
-                    surfaceHeight <= facet.getWorldRegion().maxY()) {
-
-                    if (noise.noise(wx, wz) > 0.99) {
-                        if (RandomUtils.shouldPlace(Temple.getSpawnChance())) {
-                            facet.setWorld(wx, surfaceHeight, wz, new Temple());
-                        }
-                    }
-                }
+            if (facet.getWorldRegion().encompasses(position.getX(), surfaceHeight, position.getY())
+                && noise.noise(position.getX(), position.getY()) >= 0.99) {
+                facet.setWorld(position.getX(), surfaceHeight, position.getY(), new Temple());
             }
         }
 

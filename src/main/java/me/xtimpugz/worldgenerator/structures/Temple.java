@@ -6,8 +6,8 @@ import me.xtimpugz.worldgenerator.facets.TempleFacet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.math.ChunkMath;
-import org.terasology.math.Region3i;
 import org.terasology.math.geom.BaseVector3i;
+import org.terasology.math.geom.ImmutableVector3i;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.world.block.Block;
@@ -15,7 +15,7 @@ import org.terasology.world.block.BlockManager;
 import org.terasology.world.chunks.CoreChunk;
 import org.terasology.world.generation.Region;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -34,7 +34,7 @@ public class Temple implements ISpawnableStructure {
     }
 
     public int getSize() {
-        return 27;
+        return 10;
     }
 
     @Override public void initialize() {
@@ -48,46 +48,30 @@ public class Temple implements ISpawnableStructure {
     @Override public void generateChunk(CoreChunk chunk, Region chunkRegion) {
 
         TempleFacet houseFacet = chunkRegion.getFacet(TempleFacet.class);
+        Map<BaseVector3i, Temple> worldEntries = houseFacet.getWorldEntries();
 
-        for (Entry<BaseVector3i, Temple> entry : houseFacet.getWorldEntries().entrySet()) {
+        for (Entry<BaseVector3i, Temple> entry : worldEntries.entrySet()) {
+            ImmutableVector3i startPoint = new ImmutableVector3i(entry.getKey());
+            Temple temple = entry.getValue();
+            int size = temple.getSize();
+            int min = 0;
+            int height = (temple.getSize() + 1) / 2;
 
-            Vector3i centerHousePosition = new Vector3i(entry.getKey());
-            int size = getSize();
-            int height = (size + 1) / 2;
-
-            ArrayList<Region3i> toExclude = new ArrayList<>();
-            toExclude.add(Region3i.createBounded(new Vector3i(centerHousePosition.add(2, 2, 2)), new Vector3i(centerHousePosition.sub(2, 2, 2))));
-
-            int minCounter = 0;
-            int maxCounter = size;
-
-            for (int y = 0; y <= height; y++) {
-                generateLayer(minCounter, maxCounter, y, chunk, toExclude);
-                minCounter++;
-                maxCounter--;
+            for (int i = 0; i <= height; i++) {
+                generateLayer(size, min, i, startPoint, chunk);
+                min++;
+                size--;
             }
-
         }
     }
 
-    private void generateLayer(int minCounter, int maxCounter, int y, CoreChunk chunk, ArrayList<Region3i> toExclude) {
-
-        for (int x = minCounter; x <= maxCounter; x++) {
-            for (int z = minCounter; z <= maxCounter; z++) {
-                chunk.setBlock(ChunkMath.calcBlockPos(x, y, z), stone);
+    private void generateLayer(int size, int min, int y, ImmutableVector3i centerVector, CoreChunk chunk) {
+        chunk.setBlock(ChunkMath.calcBlockPos(new Vector3i(centerVector)), dirt);
+        for (int x = min; x <= size; x++) {
+            for (int z = min; z <= size; z++) {
+                chunk.setBlock(ChunkMath.calcBlockPos(new Vector3i(x, y, z)), stone);
             }
         }
-        for (Region3i rg : toExclude) {
-            for (Vector3i v : rg) {
-                logger.info(v.toString());
-                chunk.setBlock(ChunkMath.calcBlockPos(v), stone);
-            }
-        }
-
-    }
-
-    private boolean shouldPlace(ArrayList<Region3i> toExclude, Vector3i vector3i) {
-        return true;
     }
 
 }

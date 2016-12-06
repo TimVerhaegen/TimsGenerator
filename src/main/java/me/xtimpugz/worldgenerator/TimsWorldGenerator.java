@@ -1,5 +1,6 @@
 package me.xtimpugz.worldgenerator;
 
+import me.xtimpugz.worldgenerator.providers.TimsMountainProvider;
 import me.xtimpugz.worldgenerator.providers.TimsTempleStructureProvider;
 import me.xtimpugz.worldgenerator.structures.Temple;
 import org.terasology.core.world.generator.facetProviders.SeaLevelProvider;
@@ -27,9 +28,9 @@ public class TimsWorldGenerator extends BaseFacetedWorldGenerator {
     @Override
     protected WorldBuilder createWorld() {
         return new WorldBuilder(worldGeneratorPluginLibrary)
-                .addProvider(new SeaLevelProvider(0))
                 .addProvider(new TimsSurfaceProvider())
-                //.addProvider(new TimsMountainProvider())
+                .addProvider(new SeaLevelProvider(0))
+                .addProvider(new TimsMountainProvider())
                 .addProvider(new TimsTempleStructureProvider())
                 .addRasterizer(new TimsWorldRasterizer())
                 .addRasterizer(new Temple());
