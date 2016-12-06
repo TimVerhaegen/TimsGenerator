@@ -1,6 +1,7 @@
 package me.xtimpugz.worldgenerator;
 
 import org.terasology.utilities.random.FastRandom;
+import org.terasology.utilities.random.MersenneRandom;
 import org.terasology.utilities.random.Random;
 
 /**
@@ -8,7 +9,7 @@ import org.terasology.utilities.random.Random;
  */
 public class RandomUtils {
     public static boolean shouldPlace(int chance) {
-        Random random = new FastRandom();
+        MersenneRandom random = new MersenneRandom();
         for (int i = 0; i < chance; i++) {
             int number = random.nextInt(99) + 1;
             if (number == chance) {
