@@ -17,7 +17,6 @@ import org.terasology.world.chunks.CoreChunk;
 import org.terasology.world.generation.Region;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -35,7 +34,7 @@ public class Temple implements ISpawnableStructure {
         return 3;
     }
 
-    public int getSize() {
+    public static int getSize() {
         return 28;
     }
 
@@ -48,38 +47,36 @@ public class Temple implements ISpawnableStructure {
     }
 
     @Override public void generateChunk(CoreChunk chunk, Region chunkRegion) {
-
-        TempleFacet houseFacet = chunkRegion.getFacet(TempleFacet.class);
-        Map<BaseVector3i, Temple> worldEntries = houseFacet.getWorldEntries();
-
-        for (Entry<BaseVector3i, Temple> entry : worldEntries.entrySet()) {
-            ImmutableVector3i startPoint = new ImmutableVector3i(entry.getKey());
-            Temple temple = entry.getValue();
-            int size = temple.getSize();
+        TempleFacet templFacet = chunkRegion.getFacet(TempleFacet.class);
+        for (Entry<BaseVector3i, Temple> entry : templFacet.getWorldEntries().entrySet()) {
+            // there should be a house here
+            // create a couple 3d regions to help iterate through the cube shape, inside and out
+            Vector3i v = new Vector3i(entry.getKey());
+            int size = Temple.getSize();
             int min = 0;
-            int height = (temple.getSize() + 1) / 2;
-
+            int height = (Temple.getSize() + 1) / 2;
+            chunk.setBlock(v, dirt);
             ArrayList<Region3i> region3iList = new ArrayList<>();
-            Vector3i under = new Vector3i(startPoint).add((size / 2 - 2), 0, 0);
-            Vector3i top = new Vector3i(startPoint).add((size / 2 + 2), 2, size);
+            Vector3i under = new Vector3i(v).add((size / 2 - 2), 0, 0);
+            Vector3i top = new Vector3i(v).add((size / 2 + 2), 2, size);
 
             region3iList.add(Region3i.createFromMinMax(under, top));
 
-
             for (int i = 0; i <= height; i++) {
-                generateLayer(size, min, i, startPoint, chunk, region3iList);
+                generateLayer(size, min, i, new ImmutableVector3i(v), chunk, region3iList);
                 min++;
                 size--;
             }
         }
+
     }
 
     private void generateLayer(int size, int min, int y, ImmutableVector3i centerVector, CoreChunk chunk, ArrayList<Region3i> region3iList) {
-        chunk.setBlock(ChunkMath.calcBlockPos(new Vector3i(centerVector)), dirt);
         for (int x = min; x <= size; x++) {
             for (int z = min; z <= size; z++) {
-                if (shouldRun(region3iList, new Vector3i(x, y, z).add(centerVector)))
-                    chunk.setBlock(ChunkMath.calcBlockPos(new Vector3i(new Vector3i(x, y, z)).add(centerVector)), stone);
+                if (shouldRun(region3iList, ChunkMath.calcBlockPos(new Vector3i(x, y, z).add(centerVector))))
+
+                    chunk.setBlock(ChunkMath.calcBlockPos(new Vector3i(x, y, z).add(centerVector)), stone);
             }
         }
     }
