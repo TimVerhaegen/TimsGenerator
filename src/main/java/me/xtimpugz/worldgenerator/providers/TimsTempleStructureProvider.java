@@ -19,7 +19,7 @@ public class TimsTempleStructureProvider implements FacetProvider {
     @Override
     public void process(GeneratingRegion region) {
 
-        Border3D border = region.getBorderForFacet(TempleFacet.class).extendBy(30, 30, 30);
+        Border3D border = region.getBorderForFacet(TempleFacet.class).extendBy(60, 60, 60);
 
         TempleFacet templeFacet = new TempleFacet(region.getRegion(), border);
         SurfaceHeightFacet facet = region.getRegionFacet(SurfaceHeightFacet.class);
@@ -32,7 +32,7 @@ public class TimsTempleStructureProvider implements FacetProvider {
                 if (surfaceHeight >= templeFacet.getWorldRegion().minY() &&
                     surfaceHeight <= templeFacet.getWorldRegion().maxY()) {
 
-                    if (noise.noise(wx, wz) > 0.99 && RandomUtils.shouldPlace(2)) {
+                    if (noise.noise(wx, wz) > 0.99 && RandomUtils.shouldPlace(4)) {
                         templeFacet.setWorld(wx, surfaceHeight, wz, true);
 
                     }
