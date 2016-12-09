@@ -2,7 +2,7 @@ package me.xtimpugz.worldgenerator;
 
 import me.xtimpugz.worldgenerator.providers.TimsMountainProvider;
 import me.xtimpugz.worldgenerator.providers.TimsTempleStructureProvider;
-import me.xtimpugz.worldgenerator.structures.Temple;
+import me.xtimpugz.worldgenerator.structures.TempleRasterizer;
 import org.terasology.core.world.generator.facetProviders.SeaLevelProvider;
 import org.terasology.engine.SimpleUri;
 import org.terasology.registry.In;
@@ -33,8 +33,10 @@ public class TimsWorldGenerator extends BaseFacetedWorldGenerator {
                 .addProvider(new TimsMountainProvider())
                 .addProvider(new TimsTempleStructureProvider())
                 .addRasterizer(new TimsWorldRasterizer())
-                .addRasterizer(new Temple())
+
+                .addRasterizer(new TempleRasterizer())
                 ;
 
     }
+
 }

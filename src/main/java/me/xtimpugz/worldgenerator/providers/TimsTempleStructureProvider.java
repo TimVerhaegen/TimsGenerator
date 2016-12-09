@@ -2,10 +2,8 @@ package me.xtimpugz.worldgenerator.providers;
 
 import me.xtimpugz.worldgenerator.RandomUtils;
 import me.xtimpugz.worldgenerator.facets.TempleFacet;
-import me.xtimpugz.worldgenerator.structures.Temple;
-import org.slf4j.LoggerFactory;
-import org.terasology.math.Region3i;
-import org.terasology.math.geom.BaseVector2i;
+import org.terasology.math.TeraMath;
+import org.terasology.math.geom.Rect2i;
 import org.terasology.utilities.procedural.WhiteNoise;
 import org.terasology.world.generation.*;
 import org.terasology.world.generation.facets.SurfaceHeightFacet;
@@ -21,19 +19,24 @@ public class TimsTempleStructureProvider implements FacetProvider {
     @Override
     public void process(GeneratingRegion region) {
 
-        Border3D border = region.getBorderForFacet(TempleFacet.class).extendBy(28, 28, 28);
+        Border3D border = region.getBorderForFacet(TempleFacet.class).extendBy(30, 30, 30);
+
         TempleFacet templeFacet = new TempleFacet(region.getRegion(), border);
         SurfaceHeightFacet facet = region.getRegionFacet(SurfaceHeightFacet.class);
-        Region3i worldRegion = templeFacet.getWorldRegion();
+        Rect2i worldRegion = facet.getWorldRegion();
+        for (int wz = worldRegion.minY(); wz <= worldRegion.maxY(); wz++) {
+            for (int wx = worldRegion.minX(); wx <= worldRegion.maxX(); wx++) {
+                int surfaceHeight = TeraMath.floorToInt(facet.getWorld(wx, wz));
 
-        for (BaseVector2i pos : facet.getWorldRegion().contents()) {
-            if (region.getRegion().encompasses(pos.getX(), (int) facet.getWorld(pos), pos.getY())) {
-                if (noise.noise(pos.x(), pos.y()) > 0.99) {
-                    if (RandomUtils.shouldPlace(Temple.getSpawnChance())) {
-                        LoggerFactory.getLogger(TimsTempleStructureProvider.class).info("after random");
-                        templeFacet.setWorld(pos.x(), (int) facet.getWorld(pos), pos.getY(), new Temple());
+                // check if height is within this region
+                if (surfaceHeight >= templeFacet.getWorldRegion().minY() &&
+                    surfaceHeight <= templeFacet.getWorldRegion().maxY()) {
+
+                    if (noise.noise(wx, wz) > 0.99 && RandomUtils.shouldPlace(2)) {
+                        templeFacet.setWorld(wx, surfaceHeight, wz, true);
+
                     }
-            }
+                }
             }
         }
 
