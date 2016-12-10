@@ -19,11 +19,10 @@ import org.terasology.world.generation.facets.SurfaceHeightFacet;
 public class TimsMountainProvider implements ConfigurableFacetProvider {
     private SubSampledNoise mountainNoise;
     private TimsMountainConfiguration config = new TimsMountainConfiguration();
-    private long worldSeed;
 
     @Override
     public void setSeed(long seed) {
-        worldSeed = seed;
+        long worldSeed = seed;
         mountainNoise = new SubSampledNoise(new BrownianNoise(new PerlinNoise(worldSeed + 2), 8), new Vector2f(0.001f, 0.001f), 1);
     }
 

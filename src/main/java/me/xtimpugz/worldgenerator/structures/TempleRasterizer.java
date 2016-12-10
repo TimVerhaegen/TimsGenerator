@@ -1,9 +1,6 @@
 package me.xtimpugz.worldgenerator.structures;
 
-import me.xtimpugz.worldgenerator.TimsWorldGenerator;
 import me.xtimpugz.worldgenerator.facets.TempleFacet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.terasology.math.ChunkMath;
 import org.terasology.math.Region3i;
 import org.terasology.math.geom.BaseVector3i;
@@ -20,9 +17,6 @@ import java.util.Map.Entry;
 public class TempleRasterizer implements WorldRasterizer {
     private Block stone;
     private Block dirt;
-    private Block water;
-    private Block air;
-    private Logger logger = LoggerFactory.getLogger(TimsWorldGenerator.class);
 
     public static int getSize() {
         return 22;
@@ -32,9 +26,6 @@ public class TempleRasterizer implements WorldRasterizer {
     public void initialize() {
         stone = CoreRegistry.get(BlockManager.class).getBlock("Core:Stone");
         dirt = CoreRegistry.get(BlockManager.class).getBlock("Core:Dirt");
-        water = CoreRegistry.get(BlockManager.class).getBlock("Core:Water");
-        air = CoreRegistry.get(BlockManager.class).getBlock("engine:air");
-
     }
 
     @Override
