@@ -33,10 +33,6 @@ public class TimsWorldGenerator extends BaseFacetedWorldGenerator {
                 .addProvider(new TimsMountainProvider())
                 .addProvider(new TimsTempleStructureProvider())
                 .addRasterizer(new TimsWorldRasterizer())
-
-                .addRasterizer(new TempleRasterizer())
-                ;
-
+                .addRasterizer(new TempleRasterizer());
     }
-
 }

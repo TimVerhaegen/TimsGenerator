@@ -32,9 +32,7 @@ public class TimsSurfaceProvider implements FacetProvider {
         Rect2i processRegion = facet.getWorldRegion();
         for (BaseVector2i position : processRegion.contents()) {
             facet.setWorld(position, surfaceNoise.noise(position.x(), position.y()) * 20);
-
         }
-
         region.setRegionFacet(SurfaceHeightFacet.class, facet);
     }
 }
