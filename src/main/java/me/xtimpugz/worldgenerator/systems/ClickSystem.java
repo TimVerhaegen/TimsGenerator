@@ -91,7 +91,7 @@ public class ClickSystem extends BaseComponentSystem {
             int x = (int) localPlayer.getPosition().x();
             int y = (int) localPlayer.getPosition().y();
             int z = (int) localPlayer.getPosition().z();
-            y =  ChunkMath.calcBlockPos(x,y,z).y();
+//            y =  ChunkMath.calcBlockPos(x,y,z).y();
 
             Region3i reg = null;
             for(Region3i region : relevantRegions){
