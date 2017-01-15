@@ -23,7 +23,12 @@ public class TimsSurfaceProvider implements FacetProvider {
     public void setSeed(long seed) {
         surfaceNoise = new SubSampledNoise2D(new Noise3DTo2DAdapter(new SimplexNoise(seed), 0), new Vector2f(0.01f, 0.01f), 1);
         worldSeed = seed;
+    }
+
+    @Override
+    public void initialize() {
         facetHashMap = new HashMap<Vector3i, SurfaceHeightFacet>();
+
     }
 
     @Override
